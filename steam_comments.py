@@ -42,14 +42,10 @@ def update_database(steam_comments):
 
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM steam_comments")
-
-    print(cur.description)
-
-    print()
-
-    for row in cur:
-        print(row)
+    cur.execute("DELETE FROM steam_comments")
+    for comment in steam_comments:
+        print(comment)
+        cur.execute("INSERT INTO steam_comments VALUES (%s,%s,%s,%s,%s)", comment)
 
     cur.close()
     conn.close()
@@ -57,6 +53,4 @@ def update_database(steam_comments):
 
 if __name__ == '__main__':
     comments = get_steam_comments()
-    for c in comments:
-        print(c)
-    # update_database(comments)
+    update_database(comments)
