@@ -1,8 +1,10 @@
+import calendar
 import collections
 import re
 import time
 
 from bs4 import BeautifulSoup
+import datetime
 import pymysql
 import requests
 
@@ -26,7 +28,10 @@ def get_steam_comments():
         avatar = comment.find('div', class_='commentthread_comment_avatar').img['src']
 
         date = comment.find('span', class_='commentthread_comment_timestamp').string.strip()
-        date = time.strptime(date, '%d %b @ %I:%M%p')
+        if '@' in date:
+            date = time.strptime(date, '%d %b @ %I:%M%p')
+        else:
+            date = datetime.datetime.now()
 
         text = comment.find('div', class_='commentthread_comment_text').renderContents()
         text = text.decode("utf-8").strip()
