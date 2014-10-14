@@ -12,7 +12,8 @@ import config
 
 
 STEAM_PAGE = 'http://steamcommunity.com/groups/vohcb'
-EMOTICON_REGEX = r'<img class="emoticon" src="https?://.+\..{3}/economy/emoticon/(\w+)"/>'
+EMOTICON_REGEX1 = r'<img class="emoticon" src="https?://.+\..{3}/economy/emoticon/(\w+)"/>'
+EMOTICON_REGEX2 = r'<img class="emoticon" src="https?://.+\..{3}/economy/emoticon/(\w+)"> </img>'
 
 SteamComment = collections.namedtuple('SteamComment', 'id author avatar text date')
 
@@ -35,7 +36,8 @@ def get_steam_comments():
 
         text = comment.find('div', class_='commentthread_comment_text').renderContents()
         text = text.decode("utf-8").strip()
-        text = re.sub(EMOTICON_REGEX, r':\1:', text)
+        text = re.sub(EMOTICON_REGEX1, r':\1:', text)
+        text = re.sub(EMOTICON_REGEX2, r':\1:', text)
 
         comment_list.append(SteamComment(comment_id, author, avatar, text, date))
     return comment_list
@@ -44,7 +46,6 @@ def get_steam_comments():
 def update_database(steam_comments):
     conn = pymysql.connect(host=config.mysql_host, port=3306, user=config.mysql_user, passwd=config.mysql_pass,
                            db='hardcore_bro')
-
     cur = conn.cursor()
 
     cur.execute("DELETE FROM steam_comments")
